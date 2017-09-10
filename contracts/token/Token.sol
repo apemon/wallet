@@ -19,7 +19,7 @@ contract Token is BasicToken, Ownable {
 
     function deposit(string _txref, uint _value) payable returns (string ref) {
         totalSupply.add(_value);
-        balances[msg.sender].add(_value);
+        balances[msg.sender] = balances[msg.sender].add(_value);
         Deposit(msg.sender, _value, _txref);
         return _txref;
     }

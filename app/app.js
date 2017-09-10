@@ -3,7 +3,6 @@ var bodyParser = require('body-parser');
 var moment = require('moment');
 var Web3 = require('web3');
 var contract = require('truffle-contract');
-var config = require('./config.json');
 var tokenContract = require('./../build/contracts/Token.json');
 
 var port = process.env.PORT || 3000;
