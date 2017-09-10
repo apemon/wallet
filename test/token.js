@@ -24,7 +24,7 @@ contract('Token', function (accounts) {
         });
     });
     it("should deposit correctly", function() {
-        var token ;
+        var token;
         var account = accounts[0];
         var balance1;
         var balance2;
@@ -33,68 +33,47 @@ contract('Token', function (accounts) {
             token = instance;
             return token.balanceOf.call(account);
         }).then(function(balanceA){
-            balance1 = balanceA;
+            balance1 = balanceA.toNumber();
             return token.deposit("TEST1000",1000, {from:account});
         }).then(function() {
             return token.balanceOf.call(account);
         }).then(function(balanceB){
-            balance2 = balanceB;
-            assert.equal(balance1.toNumber(), 0, "initialize balance is not zero");
-            assert.equal(balance2.toNumber(), 1000, "deposit not correctly");
+            balance2 = balanceB.toNumber();
+            assert.equal(balance1, 0, "initialize balance is not zero");
+            assert.equal(balance2, 1000, "deposit not correctly");
         })
-    })
-    /*
-    it("should call a function that depends on a linked library", function() {
-      var meta;
-      var metaCoinBalance;
-      var metaCoinEthBalance;
-
-      return MetaCoin.deployed().then(function(instance) {
-        meta = instance;
-        return meta.getBalance.call(accounts[0]);
-      }).then(function(outCoinBalance) {
-        metaCoinBalance = outCoinBalance.toNumber();
-        return meta.getBalanceInEth.call(accounts[0]);
-      }).then(function(outCoinBalanceEth) {
-        metaCoinEthBalance = outCoinBalanceEth.toNumber();
-      }).then(function() {
-        assert.equal(metaCoinEthBalance, 2 * metaCoinBalance, "Library function returned unexpected function, linkage may be broken");
-      });
     });
-    it("should send coin correctly", function() {
-      var meta;
+    it("should transfer token correctly", function(){
+        var token;
+        var account1 = accounts[1];
+        var account2 = accounts[2];
+        var balance_before_account1;
+        var balance_after_account1;
+        var balance_before_account2;
+        var balance_after_account2;
 
-      // Get initial balances of first and second account.
-      var account_one = accounts[0];
-      var account_two = accounts[1];
-
-      var account_one_starting_balance;
-      var account_two_starting_balance;
-      var account_one_ending_balance;
-      var account_two_ending_balance;
-
-      var amount = 10;
-
-      return MetaCoin.deployed().then(function(instance) {
-        meta = instance;
-        return meta.getBalance.call(account_one);
-      }).then(function(balance) {
-        account_one_starting_balance = balance.toNumber();
-        return meta.getBalance.call(account_two);
-      }).then(function(balance) {
-        account_two_starting_balance = balance.toNumber();
-        return meta.sendCoin(account_two, amount, {from: account_one});
-      }).then(function() {
-        return meta.getBalance.call(account_one);
-      }).then(function(balance) {
-        account_one_ending_balance = balance.toNumber();
-        return meta.getBalance.call(account_two);
-      }).then(function(balance) {
-        account_two_ending_balance = balance.toNumber();
-
-        assert.equal(account_one_ending_balance, account_one_starting_balance - amount, "Amount wasn't correctly taken from the sender");
-        assert.equal(account_two_ending_balance, account_two_starting_balance + amount, "Amount wasn't correctly sent to the receiver");
-      });
+        return Token.deployed().then(function (instance) {
+            token = instance;
+            return token.deposit("TEST1000", 1000, {from: account1});
+        }).then(function(){
+            return token.balanceOf.call(account1);
+        }).then(function(balanceA1){
+            balance_before_account1 = balanceA1.toNumber();
+            return token.balanceOf.call(account2);
+        }).then(function(balanceB1) {
+            balance_before_account2 = balanceB1.toNumber();
+            return token.transfer(account2, 500, {from: account1});
+        }).then(function(){
+            return token.balanceOf.call(account1);
+        }).then(function(balanceA2){
+            balance_after_account1 = balanceA2.toNumber();
+            return token.balanceOf.call(account2);
+        }).then(function(balanceB2){
+            balance_after_account2 = balanceB2.toNumber();
+            assert.equal(balance_before_account1, 1000, "initial balance is not correct");
+            assert.equal(balance_before_account2, 0, "initial balance is not zero");
+            assert.equal(balance_after_account1, 500, "ending balance should be 500");
+            assert.equal(balance_after_account2, 500, "ending balance should be 500");
+        });
     });
-    */
 });
